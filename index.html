@@ -32,29 +32,33 @@
     white-space: nowrap;
   }
   .buttons {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    padding: 20px;
-  }
-  button {
-    font-size: 1.4rem;
-    padding: 15px;
-    border: none;
-    border-radius: 6px;
-    background: #3a539b;
-    color: #ecf0f1;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    user-select: none;
-  }
-  button.operator {
-    background: #f39c12;
-  }
-  button.equal {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 20px;
+}
+
+button {
+  font-size: 1.4rem;
+  padding: 15px 0;
+  border: none;
+  border-radius: 6px;
+  background: #3a539b;
+  color: #ecf0f1;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  user-select: none;
+  width: 100%;
+  height: 60px; /* fixed height for uniformity */
+  box-sizing: border-box; /* ensures padding doesn’t increase width */
+}
+
+button.equal {
     background: #27ae60;
     grid-column: span 2;
-  }
+}
+
+
   button.clear {
     background: #c0392b;
   }
