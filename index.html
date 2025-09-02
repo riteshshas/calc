@@ -1,45 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <title>Calculator</title>
-   <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Advanced Calculator</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #2c3e50;
+    margin: 0;
+  }
+  .calculator {
+    background: #34495e;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    width: 320px;
+  }
+  .display {
+    background: #222f3e;
+    color: #ecf0f1;
+    font-size: 2rem;
+    padding: 20px;
+    text-align: right;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 20px;
+  }
+  button {
+    font-size: 1.4rem;
+    padding: 15px;
+    border: none;
+    border-radius: 6px;
+    background: #3a539b;
+    color: #ecf0f1;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    user-select: none;
+  }
+  button.operator {
+    background: #f39c12;
+  }
+  button.equal {
+    background: #27ae60;
+    grid-column: span 2;
+  }
+  button.clear {
+    background: #c0392b;
+  }
+  button:hover {
+    filter: brightness(1.1);
+  }
+  button:active {
+    filter: brightness(0.9);
+  }
+</style>
 </head>
 <body>
-   <div id="calc">
-      <div id="content">
-         <form>
-            <div id="output">
-               <input type="text" id='res'>
-            </div>
-            <div class="btn">
-               <input type="button" value='C' onclick="Clear()" id="clear">
-               <input type="button" value='?' onclick="Back()" id="backspace">
-               <input type="button" value='%' onclick="Solve('%')">
-               <input type="button" value='/' onclick="Solve('/')">
-               <br>
-               <input type="button" value='7' onclick="Solve('7')">
-               <input type="button" value='8' onclick="Solve('8')">
-               <input type="button" value='9' onclick="Solve('9')">
-               <input type="button" value='x' onclick="Solve('*')">
-               <br>
-               <input type="button" value='4' onclick="Solve('4')">
-               <input type="button" value='5' onclick="Solve('5')">
-               <input type="button" value='6' onclick="Solve('6')">
-               <input type="button" value='-' onclick="Solve('-')">
-               <br>
-               <input type="button" value='1' onclick="Solve('1')">
-               <input type="button" value='2' onclick="Solve('2')">
-               <input type="button" value='3' onclick="Solve('3')">
-               <input type="button" value='+' onclick="Solve('+')">
-               <br>
-               <input type="button" value='00' onclick="Solve('00')">
-               <input type="button" value='0' onclick="Solve('0')">
-               <input type="button" value='.' onclick="Solve('.')">
-               <input type="button" value='=' onclick="Result()">
-            </div>
-         </form>
-      </div>
-   </div>
-   <script src='index.js'></script>
+
+<div class="calculator">
+  <div id="display" class="display">0</div>
+  <div class="buttons">
+    <button class="clear" id="clear">C</button>
+    <button id="backspace">⌫</button>
+    <button class="operator" data-value="(">(</button>
+    <button class="operator" data-value=")">)</button>
+
+    <button data-value="7">7</button>
+    <button data-value="8">8</button>
+    <button data-value="9">9</button>
+    <button class="operator" data-value="/">÷</button>
+
+    <button data-value="4">4</button>
+    <button data-value="5">5</button>
+    <button data-value="6">6</button>
+    <button class="operator" data-value="*">×</button>
+
+    <button data-value="1">1</button>
+    <button data-value="2">2</button>
+    <button data-value="3">3</button>
+    <button class="operator" data-value="-">−</button>
+
+    <button data-value="0">0</button>
+    <button data-value=".">.</button>
+    <button class="equal" id="equals">=</button>
+    <button class="operator" data-value="+">+</button>
+  </div>
+</div>
+
+<script>
+  const display = document.getElementById('display');
+  const buttons = document.querySelectorAll('button[data-value]');
+  const clearBtn = document.getElementById('clear');
+  const backspaceBtn = document.getElementById('backspace');
+  const equalsBtn = document.getElementById('equals');
+
+  // Append value to display
+  function appendToDisplay(value) {
+    if(display.textContent === '0' && value !== '.') {
+      display.textContent = value;
+    } else {
+      display.textContent += value;
+    }
+  }
+
+  // Clear display
+  clearBtn.addEventListener('click', () => {
+    display.textContent = '0';
+  });
+
+  // Backspace
+  backspaceBtn.addEventListener('click', () => {
+    if(display.textContent.length > 1) {
+      display.textContent = display.textContent.slice(0, -1);
+    } else {
+      display.textContent = '0';
+    }
+  });
+
+  // Button click events for numbers and operators
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      appendToDisplay(button.getAttribute('data-value'));
+    });
+  });
+
+  // Evaluate expression
+  equalsBtn.addEventListener('click', () => {
+    try {
+      // Replace special characters with JS operators
+      let expression = display.textContent
+        .replace(/÷/g, '/')
+        .replace(/×/g, '*')
+        .replace(/−/g, '-');
+      
+      // Evaluate expression safely
+      const result = evalExpression(expression);
+      display.textContent = result;
+    } catch {
+      display.textContent = "Error";
+    }
+  });
+
+  // Evaluate expression safely
+  function evalExpression(expr) {
+    // Check for invalid characters to avoid security issues
+    if(/[^-()\d/*+.]/.test(expr)) {
+      throw new Error("Invalid characters");
+    }
+    // Use Function constructor for safer eval
+    return Function('"use strict";return (' + expr + ')')();
+  }
+
+  // Keyboard support
+  window.addEventListener('keydown', e => {
+    const allowedKeys = '0123456789+-*/().';
+    if(allowedKeys.includes(e.key)) {
+      appendToDisplay(e.key);
+    } else if(e.key === 'Enter') {
+      equalsBtn.click();
+    } else if(e.key === 'Backspace') {
+      backspaceBtn.click();
+    } else if(e.key.toLowerCase() === 'c') {
+      clearBtn.click();
+    }
+  });
+</script>
+
 </body>
 </html>
